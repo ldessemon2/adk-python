@@ -95,8 +95,9 @@ class CredentialManager:
     self._exchanger_registry.register(
         AuthCredentialTypes.OPEN_ID_CONNECT, oauth2_exchanger
     )
-
+    logger.debug("- 1 - Registered default OAuth2 credential exchanger.")
     oauth2_refresher = OAuth2CredentialRefresher()
+    logger.debug("- 2 - Registered default OAuth2 credential refresher.")
     self._refresher_registry.register(
         AuthCredentialTypes.OAUTH2, oauth2_refresher
     )
