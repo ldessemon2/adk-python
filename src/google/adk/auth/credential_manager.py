@@ -126,36 +126,47 @@ class CredentialManager:
       self, callback_context: CallbackContext
   ) -> Optional[AuthCredential]:
     """Load and prepare authentication credential through a structured workflow."""
-
+    print("Starting credential loading workflow...", file=sys.stdout)
     # Step 1: Validate credential configuration
     await self._validate_credential()
+    print("Credential configuration validated.", file=sys.stdout)
 
     # Step 2: Check if credential is already ready (no processing needed)
     if self._is_credential_ready():
+      print("Credential is ready to use without further processing.", file=sys.stdout)
       return self._auth_config.raw_auth_credential
 
     # Step 3: Try to load existing processed credential
+    print("Loading existing credential if available...", file=sys.stdout)
     credential = await self._load_existing_credential(callback_context)
+    print("Existing credential loaded." if credential else "No existing credential found.", file=sys.stdout)
 
     # Step 4: If no existing credential, load from auth response
     # TODO instead of load from auth response, we can store auth response in
     # credential service.
     was_from_auth_response = False
     if not credential:
+      print("No existing credential, checking for auth response...", file=sys.stdout)
       credential = await self._load_from_auth_response(callback_context)
+      print("Credential loaded from auth response." if credential else "No auth response found.", file=sys.stdout)
       was_from_auth_response = True
 
     # Step 5: If still no credential available, check if client credentials
     if not credential:
+      print("No credential available from existing or auth response.", file=sys.stdout)
+      print("Checking if client credentials flow can be used...", file=sys.stdout)
       # For client credentials flow, use raw credentials directly
       if self._is_client_credentials_flow():
+        print("Using client credentials from raw auth credential.", file=sys.stdout)
         credential = self._auth_config.raw_auth_credential
       else:
+        print("Client credentials flow not applicable.", file=sys.stdout)
         # For authorization code flow, return None to trigger user authorization
         return None
 
     # Step 6: Exchange credential if needed (e.g., service account to access token)
     credential, was_exchanged = await self._exchange_credential(credential)
+    print("Credential exchanged." if was_exchanged else "No exchange needed for credential.", file=sys.stdout)
 
     # Step 7: Refresh credential if expired
     was_refreshed = False
@@ -165,6 +176,8 @@ class CredentialManager:
     # Step 8: Save credential if it was modified
     if was_from_auth_response or was_exchanged or was_refreshed:
       await self._save_credential(callback_context, credential)
+    print("Credential loading workflow completed.", file=sys.stdout)
+    print(f"Final credential: {credential}", file=sys.stdout)
 
     return credential
 
