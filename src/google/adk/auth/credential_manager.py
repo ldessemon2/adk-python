@@ -15,6 +15,7 @@
 from __future__ import annotations
 
 import logging
+import sys
 from typing import Optional
 
 from fastapi.openapi.models import OAuth2
@@ -95,9 +96,9 @@ class CredentialManager:
     self._exchanger_registry.register(
         AuthCredentialTypes.OPEN_ID_CONNECT, oauth2_exchanger
     )
-    logger.debug("- 1 - Registered default OAuth2 credential exchanger.")
+    print("- 1 - Registered default OAuth2 credential exchanger.", file=sys.stdout)
     oauth2_refresher = OAuth2CredentialRefresher()
-    logger.debug("- 2 - Registered default OAuth2 credential refresher.")
+    print("- 2 - Registered default OAuth2 credential refresher.", file=sys.stdout)
     self._refresher_registry.register(
         AuthCredentialTypes.OAUTH2, oauth2_refresher
     )
