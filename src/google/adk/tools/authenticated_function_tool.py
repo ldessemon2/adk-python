@@ -82,6 +82,7 @@ class AuthenticatedFunctionTool(FunctionTool):
   async def run_async(
       self, *, args: dict[str, Any], tool_context: ToolContext
   ) -> Any:
+    print("Running authenticated function tool... run_async", file=sys.stdout)
     credential = None
     if self._credentials_manager:
       credential = await self._credentials_manager.get_auth_credential(
@@ -104,6 +105,7 @@ class AuthenticatedFunctionTool(FunctionTool):
       tool_context: ToolContext,
       credential: AuthCredential,
   ) -> Any:
+    print("Running authenticated function tool... _run_async_impl", file=sys.stdout)
     args_to_call = args.copy()
     signature = inspect.signature(self.func)
     if "credential" in signature.parameters:
