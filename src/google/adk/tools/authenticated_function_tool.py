@@ -30,6 +30,7 @@ from ..auth.credential_manager import CredentialManager
 from ..utils.feature_decorator import experimental
 from .function_tool import FunctionTool
 from .tool_context import ToolContext
+from ..logging_util import log_structured_entry
 
 logger = logging.getLogger("google_adk." + __name__)
 
@@ -88,7 +89,12 @@ class AuthenticatedFunctionTool(FunctionTool):
       if not credential:
         await self._credentials_manager.request_credential(tool_context)
         return self._response_for_auth_required or "Pending User Authorization."
-    logger.info(f"Obtained credential: {credential}")
+    
+    log_structured_entry(
+        "AuthenticatedFunctionTool.run_async",
+        "INFO",
+        {"message": "Obtained credential.", "credential": str(credential)},
+    )
     return await self._run_async_impl(
         args=args, tool_context=tool_context, credential=credential
     )
@@ -104,5 +110,15 @@ class AuthenticatedFunctionTool(FunctionTool):
     signature = inspect.signature(self.func)
     if "credential" in signature.parameters:
       args_to_call["credential"] = credential
-    logger.info(f"Calling function {self.func} with args: {args_to_call}")
+
+    
+    log_structured_entry(
+        "AuthenticatedFunctionTool._run_async_impl",
+        "INFO",
+        {
+            "message": "Calling function with args.",
+            "function": str(self.func),
+            "args": str(args_to_call),
+        },
+    )
     return await super().run_async(args=args_to_call, tool_context=tool_context)
