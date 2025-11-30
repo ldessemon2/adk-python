@@ -65,6 +65,15 @@ class AuthenticatedFunctionTool(FunctionTool):
     """
     super().__init__(func=func)
     self._ignore_params.append("credential")
+    log_structured_entry(
+        "AuthenticatedFunctionTool.__init__",
+        "INFO",
+        {
+            "message": "Initializing AuthenticatedFunctionTool.",
+            "function": str(func),
+            "auth_config": str(auth_config),
+        },
+    )
 
     if auth_config and auth_config.auth_scheme:
       self._credentials_manager = CredentialManager(auth_config=auth_config)
@@ -87,6 +96,11 @@ class AuthenticatedFunctionTool(FunctionTool):
           tool_context
       )
       if not credential:
+        log_structured_entry(
+            "AuthenticatedFunctionTool.run_async",
+            "INFO",
+            {"message": "No valid credential found, requesting user authorization."},
+        )
         await self._credentials_manager.request_credential(tool_context)
         return self._response_for_auth_required or "Pending User Authorization."
     
