@@ -13,7 +13,7 @@
 # limitations under the License.
 
 from __future__ import annotations
-
+import sys
 import inspect
 import logging
 from typing import Any
@@ -88,11 +88,11 @@ class AuthenticatedFunctionTool(FunctionTool):
           tool_context
       )
       if not credential:
-        print("No credential obtained, requesting user authorization.")
+        print("No credential obtained, requesting user authorization.", file=sys.stdout)
         await self._credentials_manager.request_credential(tool_context)
         return self._response_for_auth_required or "Pending User Authorization."
-    
-    print("Credential obtained, proceeding to call the function.")
+
+    print("Credential obtained, proceeding to call the function.", file=sys.stdout)
     return await self._run_async_impl(
         args=args, tool_context=tool_context, credential=credential
     )
@@ -109,6 +109,6 @@ class AuthenticatedFunctionTool(FunctionTool):
     if "credential" in signature.parameters:
       args_to_call["credential"] = credential
 
-    
-    print(f"Calling function {self.func} with args: {args_to_call}")
+
+    print(f"Calling function {self.func} with args: {args_to_call}", file=sys.stdout)
     return await super().run_async(args=args_to_call, tool_context=tool_context)
