@@ -23,6 +23,7 @@ from ..auth.auth_credential import AuthCredential
 from ..auth.auth_handler import AuthHandler
 from ..auth.auth_tool import AuthConfig
 from .tool_confirmation import ToolConfirmation
+import sys
 
 if TYPE_CHECKING:
   from ..agents.invocation_context import InvocationContext
@@ -56,6 +57,7 @@ class ToolContext(CallbackContext):
       event_actions: Optional[EventActions] = None,
       tool_confirmation: Optional[ToolConfirmation] = None,
   ):
+    print("Initializing ToolContext...", file=sys.stdout)
     super().__init__(invocation_context, event_actions=event_actions)
     self.function_call_id = function_call_id
     self.tool_confirmation = tool_confirmation
@@ -65,6 +67,7 @@ class ToolContext(CallbackContext):
     return self._event_actions
 
   def request_credential(self, auth_config: AuthConfig) -> None:
+    print("ToolContext Requesting credential...", file=sys.stdout)
     if not self.function_call_id:
       raise ValueError('function_call_id is not set.')
     self._event_actions.requested_auth_configs[self.function_call_id] = (
