@@ -58,7 +58,7 @@ class ToolContext(CallbackContext):
       tool_confirmation: Optional[ToolConfirmation] = None,
   ):
     print("Initializing ToolContext...", file=sys.stdout)
-    print(f"Invocation Context: {invocation_context}", file=sys.stdout)
+    #print(f"Invocation Context: {invocation_context}", file=sys.stdout)
     super().__init__(invocation_context, event_actions=event_actions)
     self.function_call_id = function_call_id
     self.tool_confirmation = tool_confirmation
