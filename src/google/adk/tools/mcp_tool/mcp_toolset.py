@@ -136,7 +136,7 @@ class McpToolset(BaseToolset):
       header_provider: A callable that takes a ReadonlyContext and returns a
         dictionary of headers to be used for the MCP session.
     """
-    super().__init__(tool_filter=tool_filter, tool_name_prefix=tool_name_prefix)
+    super().__init__(tool_filter=tool_filter, tool_name_prefix=tool_name_prefix, auth_scheme=auth_scheme, auth_credential=auth_credential)
 
     if not connection_params:
       raise ValueError("Missing connection params in McpToolset.")
